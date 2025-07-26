@@ -55,6 +55,5 @@ if __name__ == "__main__":
     data = torch.tensor(encode_text, dtype=torch.long)
     tiktoken_encode_text = tiktoken_encode(text)
     inspect_tiktoken_vocabulary()
-    import pdb; pdb.set_trace()
 
 

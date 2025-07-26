@@ -81,3 +81,37 @@ Example:
 len(tiktoken_encode_text)/len(encode_text) = 0.3030543467151518 (30%)
 ```
 
+#### Chunking and Block size
+
+The idea here is to create the sequences that we are going to feed to the model. After encoding the text we will first split up our data to train and validation to evaluate our training process (Ovefitting).
+
+The first dimension of our input tensor is going to be the `block_size`, it refers to the fixed lenghts of the sequences that we are going to keep feeding to the model.
+
+On the other hand the next dimension is going to be `Batch_size`, this is basacly how many examples of the sequences that we want to feed to the model at the same time to make use of the parallele computing (Make GPU busy).
+
+Next we want to create ourt target (We have to set a goal for the model so it can follow it during the learning).The goal here is going to be to predict the next token knowing various context lenghts. 
+
+Example: 
+```
+text : I drive my car everyday.
+model_inpuy : I drive my
+the prediction : car
+```
+POV of the model during the training process:
+
+```
+single input vector : [24, 43, 58, 5, 57, 1, 46, 43]
+batch : [[24, 43, 58,  5, 57,  1, 46, 43],
+        [44, 53, 56,  1, 58, 46, 39, 58],
+        [52, 58,  1, 58, 46, 39, 58,  1],
+        [25, 17, 27, 10,  0, 21,  1, 54]]
+
+when input is [24] the target: 43
+when input is [24, 43] the target: 58
+when input is [24, 43, 58] the target: 5
+when input is [24, 43, 58, 5] the target: 57
+when input is [24, 43, 58, 5, 57] the target: 1
+when input is [24, 43, 58, 5, 57, 1] the target: 46
+when input is [24, 43, 58, 5, 57, 1, 46] the target: 43
+when input is [24, 43, 58, 5, 57, 1, 46, 43] the target: 39
+```
