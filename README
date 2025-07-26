@@ -115,3 +115,11 @@ when input is [24, 43, 58, 5, 57, 1] the target: 46
 when input is [24, 43, 58, 5, 57, 1, 46] the target: 43
 when input is [24, 43, 58, 5, 57, 1, 46, 43] the target: 39
 ```
+
+
+##TODO 
+* Check the BigramLanguageModel
+* Check attention 
+* Check Multi-Head Latent Attention (MLA)
+* Check Bert
+* vLLM
