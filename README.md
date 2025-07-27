@@ -165,8 +165,7 @@ I paceereneve
 It looks less Chaotic than before (still nothing make sens beacause the mdoel is still too simple to capture high level patterns and relationships between the tokens)
 
 ##TODO 
-* Check the BigramLanguageModel
-* Check attention 
 * Check Multi-Head Latent Attention (MLA)
 * Check Bert
 * vLLM
+* Move training to GPU
