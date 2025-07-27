@@ -116,6 +116,53 @@ when input is [24, 43, 58, 5, 57, 1, 46] the target: 43
 when input is [24, 43, 58, 5, 57, 1, 46, 43] the target: 39
 ```
 
+## Bigram model
+
+We're going to start by creating a simple model that is based on Markov theory (knowing the previous state, what is the probability of the next state being a certain value).
+
+Following this same principle, we can create a process that can learn how to predict the next token knowing a certain context window.
+The loss we need to optimize here is going to be: 
+```
+loss = F.cross_entropy(logits, targets)
+```
+Where the logits are going to represent the vocabulary of the 
+model and it's assosiated probabalities.
+
+We start with a randomly itialized model and we try to generate text using only the lest token as an input:
+Example : 
+
+```
+input: [24, 43, 58, 5, 57, 1, 46, 43] ==> "Let's he"
+generate: Let's heXJamq!iui$
+----------------------------------------------------------------------------------------------------
+input: [44, 53, 56, 1, 58, 46, 39, 58] ==> "for that"
+generate: for thatIRCRz&CDio
+```
+
+Afterwards we use our training process to learn the BigramModel and complete and generate new tokens for us.
+
+Loss function of our training (10k epochs):
+
+![Training Loss](reporting/loss/loss_plot.png)
+
+After training, our model can generate more coherent text based on the input context:
+
+```
+input: Let's he
+generate: Let's hed I'dofons
+--------------------
+input: for that
+generate: for that sprs m; i
+--------------------
+input: nt that
+generate: nt that thad bupan
+--------------------
+input: MEO:
+I p
+generate: MEO:
+I paceereneve
+```
+It looks less Chaotic than before (still nothing make sens beacause the mdoel is still too simple to capture high level patterns and relationships between the tokens)
 
 ##TODO 
 * Check the BigramLanguageModel
