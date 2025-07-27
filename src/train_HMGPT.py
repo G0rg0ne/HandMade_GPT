@@ -26,14 +26,37 @@ def show_input_prediction_sequence(x, y, itos):
             print(f"when input is {context.tolist()} the target: {gt}")
         print("-"*100)
 
-def train_model(model,train_data):
+
+def estimate_loss(model,train_data,val_data,eval_iters,block_size,batch_size):
+    out = {}
+    model.eval()
+    for split in ['train', 'val']:
+        if split == 'train' : 
+            split_data = train_data
+        else : 
+            split_data = val_data
+        losses = torch.zeros(eval_iters)
+        for k in range(eval_iters):
+            X, Y = get_batch(split_data,block_size,batch_size)
+            logits, loss = model(X, Y)
+            losses[k] = loss.item()
+        out[split] = losses.mean()
+    model.train()
+    return out
+
+def train_model(model,train_data,val_data):
     batch_size = 32
     block_size = 8
     epochs = 10000
     learning_rate = 1e-3
+    eval_iters = 200
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
     loss_values = []
     for iter in range(epochs):
+        #estimate the loss
+        estimated_loss = estimate_loss(model,train_data,val_data,eval_iters,block_size,batch_size)
+        if iter % 10 == 0:
+            print(f"iter {iter} train loss: {estimated_loss['train']} val loss: {estimated_loss['val']}")
         #sample a batch of data
         xb, yb = get_batch(train_data, block_size, batch_size)
         #evaluate the loss
@@ -41,9 +64,8 @@ def train_model(model,train_data):
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
-        loss_values.append(loss.item())
-        if iter % 10 == 0:
-            print(f"iter {iter} loss: {loss.item()}")
+        loss_values.append(estimated_loss['train'])
+    #i want to smoothen the loss values
     plot_loss(loss_values, title='Training Loss', xlabel='Iterations', ylabel='Loss')
     return model
     
@@ -66,6 +88,6 @@ if __name__ == "__main__":
 
     #Model
     model = BigramLanguageModel(vocab_size)
-    trained_model = train_model(model,train_data)
+    trained_model = train_model(model,train_data,val_data)
     generate_text(train_batch_x, itos, trained_model)
     import pdb; pdb.set_trace()
